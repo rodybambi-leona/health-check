@@ -11,9 +11,10 @@
             --primary-light: #EBF5FB; /* 極淺藍背景 */
             --accent-green: #2ECC71; /* 鮮綠 */
             --accent-soft-green: #D5F5E3; /* 淺綠區塊 */
+            --warning-red: #E74C3C;   /* 警示紅 */
+            --mom-pink: #FADBD8;      /* 媽咪粉 */
             --text-dark: #2C3E50;
             --white: #FFFFFF;
-            --warning-orange: #D35400; /* 警示文字顏色 */
         }
 
         body {
@@ -59,7 +60,7 @@
             padding-left: 12px;
         }
 
-        /* 按鈕與選項格線設定 */
+        /* 選項按鈕設定 */
         .option-grid { 
             display: grid; 
             grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
@@ -93,6 +94,9 @@
             transform: translateY(-2px);
         }
 
+        /* 特殊選項顏色 (孕婦/素食) */
+        .special-option span { border: 1px dashed var(--primary-dark); background: #fdfdfd; }
+
         select { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #BDC3C7; font-size: 1rem; background: white; }
 
         .btn-submit {
@@ -107,10 +111,30 @@
         }
         .btn-submit:active { transform: scale(0.98); }
 
-        /* 結果頁樣式 */
+        /* --- 結果頁樣式 --- */
         #result-page { display: none; padding: 0; }
         
         .result-header { padding: 30px 30px 10px 30px; background: var(--white); }
+
+        /* 警示卡片 */
+        .alert-box {
+            margin: 0 30px 20px 30px;
+            padding: 15px;
+            border-radius: 10px;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: flex-start;
+        }
+        .alert-box.mom {
+            background-color: var(--mom-pink);
+            color: #922B21;
+            border: 1px solid #E6B0AA;
+        }
+        .alert-box.normal {
+            background-color: #FEF9E7;
+            color: #7D6608;
+            border: 1px solid #F9E79F;
+        }
 
         .schedule-card {
             margin: 20px 30px;
@@ -133,12 +157,10 @@
         .synergy-box {
             background: var(--accent-soft-green);
             padding: 15px 20px;
-            font-size: 0.95rem;
+            font-size: 0.9rem;
             color: #145A32;
             border-bottom: 1px solid #EAECEE;
         }
-        
-        .synergy-title { font-weight: bold; margin-bottom: 5px; display: block; }
 
         .item-list { padding: 15px 20px; }
 
@@ -220,6 +242,16 @@
 
             <div class="question-block">
                 <label class="q-title">3. 您最近的困擾或狀態 (可複選)</label>
+                <div class="option-grid" style="margin-bottom:15px;">
+                     <label class="option-btn special-option">
+                        <input type="checkbox" value="pregnancy">
+                        <span style="color:#C0392B;">🤰 孕期/哺乳媽咪</span>
+                    </label>
+                    <label class="option-btn special-option">
+                        <input type="checkbox" value="vegetarian">
+                        <span style="color:#1E8449;">🥬 素食者</span>
+                    </label>
+                </div>
                 <div class="option-grid" id="symptoms-container">
                     </div>
             </div>
@@ -233,6 +265,8 @@
             <h2 style="color:var(--primary-dark); margin:0;">📋 您的專屬處方籤</h2>
             <p style="color:#666; font-size:0.9rem;">以下是為您量身打造的服用時間表與成分解析</p>
         </div>
+
+        <div id="alert-section"></div>
 
         <div id="schedule-list"></div>
 
@@ -281,57 +315,58 @@
 
     // 成分詳細功效
     const ingredientInfo = {
-        'B群': '啟動身體能量代謝，穩定神經',
+        'B群': '含葉酸與B12，寶寶發育與媽咪提神關鍵',
         '維他命C': '抗氧化，促進膠原合成與鐵質吸收',
-        '鐵': '補血氣，改善蒼白與疲勞',
-        '膠原蛋白': '支撐皮膚彈性，保水',
-        '益生菌': '調整腸道菌叢，改善口腔氣味與排便',
-        '薑黃': '加強代謝，減少身體慢性發炎',
-        '葉黃素': '過濾藍光，保護黃斑部',
-        '生物素': '頭髮與指甲的關鍵原料',
-        '鈣': '穩定神經，預防骨質流失',
-        '鎂': '天然放鬆劑，改善睡眠與情緒',
-        '魚油': '抗發炎(紅腫痘)，保護心血管',
-        '鋅': '修復黏膜與皮膚，控制油脂',
-        'Q10': '心臟動力來源，提升活力',
-        '肌酸': '提升肌肉爆發力與含水量',
-        '蛋白質': '修復肌肉，避免代謝下降',
-        'GABA': '抑制過度興奮神經，助眠',
-        '穀胱甘肽': '強力抗氧化，亮白護肝'
+        '鐵': '補血氣，提供寶寶與媽咪造血原料',
+        '膠原蛋白': '預防妊娠紋，支撐肚皮彈性',
+        '益生菌': '建立寶寶免疫基礎，改善媽咪便秘',
+        '薑黃': '加強代謝 (⚠️孕期請避開，產後可適量)',
+        '葉黃素': '過濾藍光，保護媽咪視力',
+        '生物素': '產後落髮救星',
+        '鈣': '一人吃兩人補，預防抽筋與骨質流失',
+        '鎂': '天然放鬆劑，改善睡眠與肌肉緊繃',
+        '魚油': '補充DHA幫助寶寶腦部發育',
+        '鋅': '修復黏膜，產後傷口癒合',
+        'Q10': '心臟動力 (⚠️孕期/哺乳暫停)',
+        '肌酸': '肌肉爆發力 (⚠️孕期/哺乳暫停)',
+        '蛋白質': '修復組織，乳汁分泌原料',
+        'GABA': '抑制神經興奮，助眠',
+        '穀胱甘肽': '美白 (⚠️孕期/哺乳暫停)'
     };
 
-    // 時間段組合說明 (已加入胃不適與補吃提醒)
+    // 時間段組合說明
     const timeSlotSynergy = {
         '起床空腹': {
             title: '☀️ 開啟吸收的黃金期',
             desc: `
-                空腹時胃酸少，膠原蛋白與鐵(搭配C)吸收率大幅提升。<br>
-                <div style="margin-top:8px; font-size:0.9em; color:#D35400; border-top:1px dotted #ccc; padding-top:5px;">
-                    ⚠️ <b>若胃不舒服：</b>請改為「早餐後」或隨餐服用。<br>
-                    ⏰ <b>若早上忘記：</b>可改在午餐後 2 小時補充。
+                空腹時膠原蛋白與鐵(搭配C)吸收率最佳。<br>
+                <div style="margin-top:5px; font-size:0.85em; color:#D35400;">
+                    ⚠️ 若胃敏感或懷孕反胃，請改為「隨餐」或「餐後」吃。
                 </div>
             `
         },
         '早餐後': {
             title: '🚀 啟動一日能量',
-            desc: 'B群與薑黃幫助早餐轉化能量。葉黃素跟著油脂吃吸收更好。'
+            desc: 'B群幫助能量代謝。葉黃素為脂溶性，需搭配早餐油脂吸收。'
         },
         '午餐後': {
-            title: '🛡️ 強化防護與抗炎',
-            desc: '鈣片移到午餐避開鐵劑競爭。魚油隨餐吃，幫助下午專注抗炎。'
+            title: '🛡️ 強化防護',
+            desc: '鈣片移至午餐以避開早餐的鐵劑。魚油隨餐吃吸收最好。'
         },
         '運動前後': {
-            title: '💪 肌肉修復黃金窗',
-            desc: '肌酸與蛋白質即時回補肌肉損耗。'
+            title: '💪 修復黃金窗',
+            desc: '蛋白質即時回補肌肉與體力損耗。'
         },
         '睡前': {
-            title: '🌙 神經放鬆與修復',
-            desc: '鎂與GABA關閉緊繃神經。肝臟排毒期適合穀胱甘肽。'
+            title: '🌙 放鬆與修復',
+            desc: '鎂幫助神經放鬆。益生菌睡前空腹吃，定殖效果佳。'
         }
     };
 
     // 症狀對應規則
     const rules = {
+        'pregnancy': ['B群', '鐵', '鈣', '魚油', '益生菌', '維他命C'], // 孕期核心
+        'vegetarian': ['B群', '鐵', '鋅', '鈣'], // 素食核心
         'fatigue': ['B群', '鐵', 'Q10'],
         'pale': ['鐵', '維他命C', 'B群'],
         'dull_skin': ['穀胱甘肽', '維他命C', '膠原蛋白'],
@@ -353,20 +388,25 @@
         'bad_breath': ['益生菌', '鋅']
     };
 
-    // 維補益產品資料
-    const wbData = {
-        'B群': { name: '天然酵母B群', desc: '早餐後 2 顆｜提神不燥熱' },
-        '維他命C': { name: '西印度櫻桃C', desc: '早餐後或空腹 2 顆｜助膠原吸收' },
-        '鈣': { name: '海藻鈣', desc: '午餐後 2 顆｜高吸收率' },
-        '鎂': { name: '天然酵母鎂', desc: '睡前 1-2 顆｜放鬆好眠' },
-        '鋅': { name: '天然酵母鋅', desc: '午晚餐後 1 顆｜修復皮膚/黏膜' },
-        '薑黃': { name: '薑黃', desc: '餐後 2 顆｜加強代謝' },
-        '鐵': { name: '酵母鐵', desc: '早上空腹 1 顆｜氣色救星' }
+    // ⛔️ 禁忌規則：如果選了 Key，就要移除 Value 裡的成分
+    const contraindications = {
+        'pregnancy': ['Q10', '穀胱甘肽', '肌酸', '薑黃', 'A醇'],
+        'vegetarian': ['魚油', '膠原蛋白'] // 除非標示素食，否則預設移除，或提示
+        // 註：這裡假設使用者的魚油/膠原是動物性，若是素食來源可保留，這邊先做嚴格過濾
     };
 
-    // --- 2. 初始化與邏輯 ---
+    // 維補益產品資料
+    const wbData = {
+        'B群': { name: '天然酵母B群', desc: '早餐後 2 顆｜含葉酸，孕媽咪/備孕必備' },
+        '維他命C': { name: '西印度櫻桃C', desc: '早餐後或空腹 2 顆｜天然來源更溫和' },
+        '鈣': { name: '海藻鈣', desc: '午餐後 2 顆｜素食可食，孕期補鈣首選' },
+        '鎂': { name: '天然酵母鎂', desc: '睡前 1-2 顆｜幫助入睡，預防抽筋' },
+        '鋅': { name: '天然酵母鋅', desc: '午晚餐後 1 顆｜增強保護力' },
+        '薑黃': { name: '薑黃', desc: '餐後 2 顆｜加強代謝 (孕期暫停)' },
+        '鐵': { name: '酵母鐵', desc: '早上空腹 1 顆｜溫和不便秘，孕期必備' }
+    };
 
-    // 產生選項
+    // --- 初始化 ---
     const container = document.getElementById('symptoms-container');
     symptoms.forEach(item => {
         container.innerHTML += `
@@ -378,13 +418,20 @@
     });
 
     function showResults() {
+        // 取得輸入
         const gender = document.querySelector('input[name="gender"]:checked').value;
         const age = document.getElementById('age').value;
-        const checked = Array.from(document.querySelectorAll('#symptoms-container input:checked')).map(cb => cb.value);
         
-        let needs = new Set(['B群']); // 基礎
+        // 取得所有勾選的 checkbox (包含一般症狀與特殊身份)
+        const allCheckboxes = document.querySelectorAll('input[type="checkbox"]:checked');
+        const checkedValues = Array.from(allCheckboxes).map(cb => cb.value);
+        
+        const isPregnant = checkedValues.includes('pregnancy');
+        const isVeg = checkedValues.includes('vegetarian');
 
-        // 性別規則
+        let needs = new Set(['B群']); // 所有人基礎
+
+        // 1. 性別規則
         if (gender === 'female') {
             if (['15-25', '26-40'].includes(age)) { needs.add('鐵'); needs.add('維他命C'); }
             else { needs.add('鈣'); needs.add('魚油'); }
@@ -393,19 +440,64 @@
             if (['41-55', '56+'].includes(age)) needs.add('魚油');
         }
 
-        // 症狀規則
-        checked.forEach(s => {
+        // 2. 症狀與特殊身份規則疊加
+        checkedValues.forEach(s => {
             if(rules[s]) rules[s].forEach(n => needs.add(n));
             if(s === 'fatigue' && gender === 'female') needs.add('鐵');
         });
 
+        // 3. ⛔️ 禁忌過濾邏輯 (最重要的一步)
+        if (isPregnant) {
+            contraindications['pregnancy'].forEach(banned => needs.delete(banned));
+        }
+        if (isVeg) {
+            // 素食者移除動物性產品 (除非確認是素食來源)
+            // 這裡假設魚油是一般的，建議移除並改推亞麻仁油(但清單沒這個)，
+            // 為求安全先移除魚油與膠原蛋白
+            contraindications['vegetarian'].forEach(banned => needs.delete(banned));
+        }
+
         const finalNeeds = Array.from(needs);
+        
+        renderAlerts(isPregnant, isVeg);
         renderSchedule(finalNeeds);
         renderWb(finalNeeds);
 
         document.getElementById('quiz-page').style.display = 'none';
         document.getElementById('result-page').style.display = 'block';
         window.scrollTo(0,0);
+    }
+
+    function renderAlerts(isMom, isVeg) {
+        const alertSection = document.getElementById('alert-section');
+        alertSection.innerHTML = '';
+
+        if (isMom) {
+            alertSection.innerHTML += `
+                <div class="alert-box mom">
+                    <span style="font-size:1.5rem; margin-right:10px;">🤰</span>
+                    <div>
+                        <strong>孕媽咪/哺乳專屬提醒：</strong><br>
+                        1. 系統已自動為您移除 <b>Q10、穀胱甘肽、薑黃</b> 等暫不建議使用的成分。<br>
+                        2. <b>魚油</b>建議在預產期前 2 週暫停食用 (或是諮詢醫師)，哺乳期可恢復食用。<br>
+                        3. <b>維補益的海藻鈣與酵母B群</b> 非常適合孕期補充，請放心食用。
+                    </div>
+                </div>
+            `;
+        }
+        
+        if (isVeg) {
+            alertSection.innerHTML += `
+                <div class="alert-box normal">
+                    <span style="font-size:1.5rem; margin-right:10px;">🥬</span>
+                    <div>
+                        <strong>素食者營養筆記：</strong><br>
+                        1. 已加強 <b>B12 (B群) 與 鐵</b> 的補充建議，這是素食者最易缺乏的。<br>
+                        2. 系統移除了魚油與膠原蛋白 (通常為動物性)。若您想補充 Omega-3，建議另外攝取亞麻仁油或藻油。
+                    </div>
+                </div>
+            `;
+        }
     }
 
     function renderSchedule(list) {
@@ -454,7 +546,7 @@
                 `;
             }
         }
-        document.getElementById('schedule-list').innerHTML = html || '<p style="text-align:center; padding:20px;">請先勾選您的狀況</p>';
+        document.getElementById('schedule-list').innerHTML = html || '<p style="text-align:center; padding:20px;">恭喜您！目前狀態良好，維持基礎均衡飲食即可。</p>';
     }
 
     function renderWb(list) {
