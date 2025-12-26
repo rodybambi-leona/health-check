@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>我應該吃的保健品是？</title>
+    <style>
+        :root {
+            --primary-dark: #1F4E79; /* 深藍 */
+            --primary-light: #D6EAF8; /* 淺藍 */
+            --accent-green: #D5F5E3; /* 淺綠 */
+            --text-dark: #333333;
+            --white: #FFFFFF;
+            --btn-hover: #153858;
+        }
+
+        body {
+            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+            background-color: #F4F7F6;
+            color: var(--text-dark);
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Header */
+        header {
+            text-align: center;
+            padding: 40px 0;
+            background: linear-gradient(135deg, var(--white) 0%, var(--primary-light) 100%);
+            border-bottom: 4px solid var(--accent-green);
+            border-radius: 0 0 20px 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            color: var(--primary-dark);
+            margin: 0;
+            font-size: 2.2rem;
+            font-weight: 700;
+        }
+
+        h2 {
+            color: var(--primary-dark);
+            border-left: 5px solid var(--accent-green);
+            padding-left: 15px;
+            margin-top: 30px;
+            margin-bottom: 20px;
+        }
+
+        /* Card Style */
+        .card {
+            background: var(--white);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+            margin-bottom: 25px;
+            transition: transform 0.2s;
+        }
+
+        /* Form Elements */
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        label.section-title {
+            display: block;
+            font-weight: bold;
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+            color: var(--primary-dark);
+        }
+
+        .radio-group, .checkbox-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .checkbox-item {
+            flex: 1 1 30%; /* Three columns on desktop */
+            min-width: 140px;
+            background-color: #F8F9FA;
+            border: 1px solid #E0E0E0;
+            border-radius: 8px;
+            padding: 10px 15px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+        }
+
+        .checkbox-item:hover {
+            background-color: var(--primary-light);
+            border-color: var(--primary-dark);
+        }
+
+        .checkbox-item input {
+            margin-right: 10px;
+            transform: scale(1.2);
+        }
+
+        select {
+            width: 100%;
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            font-size: 1rem;
+        }
+
+        /* Buttons */
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            background-color: var(--primary-dark);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.3s;
+            text-align: center;
+            text-decoration: none;
+        }
+
+        .btn:hover {
+            background-color: var(--btn-hover);
+        }
+
+        .btn-secondary {
+            background-color: #95a5a6;
+            margin-top: 10px;
+        }
+
+        /* Results Section */
+        #result-section {
+            display: none; /* Hidden by default */
+        }
+
+        .recommendation-box {
+            background-color: var(--accent-green);
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .schedule-item {
+            background: var(--white);
+            border-left: 4px solid var(--primary-dark);
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 0 8px 8px 0;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        .schedule-time {
+            color: var(--primary-dark);
+            font-weight: bold;
+            font-size: 1.1em;
+            margin-bottom: 5px;
+            display: block;
+        }
+
+        .we-believe-highlight {
+            border: 2px solid var(--primary-dark);
+            background-color: #fcfcfc;
+        }
+
+        .brand-badge {
+            background-color: var(--primary-dark);
+            color: white;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            margin-left: 5px;
+            vertical-align: middle;
+        }
+
+        .note {
+            font-size: 0.9rem;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .checkbox-item {
+                flex: 1 1 45%;
+            }
+            h1 { font-size: 1.8rem; }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="container">
+        <h1>我應該吃的保健品是？</h1>
+        <p>30秒快速檢測，量身打造您的營養補給方案</p>
+    </div>
+</header>
+
+<div class="container">
+
+    <div id="assessment-form" class="card">
+        <div class="form-group">
+            <label class="section-title">1. 您的性別</label>
+            <div class="radio-group">
+                <label class="checkbox-item"><input type="radio" name="gender" value="female" checked> 女性</label>
+                <label class="checkbox-item"><input type="radio" name="gender" value="male"> 男性</label>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="section-title">2. 您的年齡</label>
+            <select id="age">
+                <option value="15-25">15 - 25 歲 (學生/青春期)</option>
+                <option value="26-40" selected>26 - 40 歲 (職場/輕熟齡)</option>
+                <option value="41-55">41 - 55 歲 (熟齡/更年期)</option>
+                <option value="56+">56 歲以上 (銀髮保養)</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label class="section-title">3. 目前的生活習慣與身體狀態 (可複選)</label>
+            <div class="checkbox-group" id="symptoms-container">
+                </div>
+        </div>
+
+        <button class="btn" onclick="analyzeHealth()">查看我的專屬建議</button>
+    </div>
+
+    <div id="result-section">
+        
+        <div class="card recommendation-box">
+            <h3 style="margin-top:0; color:#153858;">💊 您的專屬營養清單</h3>
+            <p>根據您的評估，您目前最需要的關鍵營養素為：</p>
+            <div id="summary-list" style="font-weight:bold; font-size:1.1rem;"></div>
+        </div>
+
+        <div class="card">
+            <h2>⏰ 建議服用時間表</h2>
+            <div id="schedule-container">
+                </div>
+        </div>
+
+        <div class="card we-believe-highlight">
+            <h2 style="display:flex; align-items:center;">
+                🏆 維補益 (WeBelieve) 專屬推薦
+                <span style="font-size:0.8rem; background:#D5F5E3; color:#1F4E79; padding:3px 8px; border-radius:10px; margin-left:10px;">天然酵母來源</span>
+            </h2>
+            <p>針對您的需求，我們整理了維補益系列的最佳吃法：</p>
+            <div id="webelieve-recommendations">
+                </div>
+        </div>
+
+        <a href="https://www.likepets-official.com/one-page-stores/Leona2512" target="_blank" class="btn">
+            立即前往選購 🛒
+        </a>
+        <button class="btn btn-secondary" onclick="resetForm()">重新檢測</button>
+
+    </div>
+
+</div>
+
+<script>
+    // --- Data Configuration ---
+    
+    const symptomsList = [
+        { id: 'alcohol', label: '飲酒習慣' },
+        { id: 'smoke', label: '吸菸習慣' },
+        { id: 'period_pain', label: '經期不適 (經痛/悶)' },
+        { id: 'pms', label: '經前症候群 (易怒/胸漲)' },
+        { id: 'constipation', label: '排便不順' },
+        { id: 'pale', label: '氣色不佳 (蒼白)' },
+        { id: 'dull_skin', label: '皮膚蠟黃/暗沉' },
+        { id: 'private_part', label: '私密處發炎/感染' },
+        { id: 'sensitive_skin', label: '敏感肌' },
+        { id: 'weight_loss', label: '減重族群' },
+        { id: 'workout', label: '有運動習慣' },
+        { id: 'acne', label: '痘痘肌' },
+        { id: 'dry_skin', label: '皮膚乾癢' },
+        { id: 'oily_skin', label: '油脂分泌旺盛' },
+        { id: 'hair_loss', label: '落髮/髮量稀疏' },
+        { id: 'fatigue', label: '容易疲累' },
+        { id: 'cold', label: '怕冷/手腳冰冷' },
+        { id: 'sleep', label: '睡眠障礙/睡不好' },
+        { id: 'eyes', label: '高度用眼/3C族' }
+    ];
+
+    // Rules: Mapping Symptoms to Needed Supplements
+    const rules = {
+        'alcohol': ['B群', '薑黃'],
+        'smoke': ['維他命C'],
+        'period_pain': ['鈣', '鎂', '魚油'],
+        'pms': ['鈣', '鎂', 'B群'], // B6 in B complex
+        'constipation': ['鎂', '益生菌', '酵素'],
+        'pale': ['鐵', '維他命C', 'B群'],
+        'dull_skin': ['穀胱甘肽', '維他命C', '膠原蛋白'],
+        'private_part': ['私密處益生菌', '蔓越莓'],
+        'sensitive_skin': ['魚油', '益生菌'],
+        'weight_loss': ['B群', '蛋白質', '益生菌'],
+        'workout': ['肌酸', 'B群', '魚油'],
+        'acne': ['鋅', '魚油', '抗痘益生菌'],
+        'dry_skin': ['魚油', '膠原蛋白'],
+        'oily_skin': ['鋅'],
+        'hair_loss': ['鐵', '鋅', '生物素'],
+        'fatigue': ['B群', '鐵', 'Q10'], // Iron logic handled in function
+        'cold': ['鐵', '薑黃'],
+        'sleep': ['鎂', 'GABA'],
+        'eyes': ['葉黃素', '魚油']
+    };
+
+    // WeBelieve Brand Data (Mapping supplements to usage instructions)
+    const weBelieveData = {
+        'B群': { name: '天然酵母B群', dose: '每日 2 顆', time: '早餐後', note: '天然來源，不會讓尿液變螢光黃，提神效果溫和持久。' },
+        '維他命C': { name: '西印度櫻桃維他命C', dose: '每日 2 顆', time: '早餐後或空腹', note: '與膠原蛋白或鐵一起吃，吸收率最高。' },
+        '鈣': { name: '海藻鈣', dose: '每日 2 顆 (分開吃)', time: '早餐與午餐各1顆', note: '避免一次吞2顆，分次吸收最好。若有吃鐵，請與鈣隔開。' },
+        '鎂': { name: '天然酵母鎂', dose: '每日 1-2 顆', time: '睡前', note: '放鬆神經首選，助眠並緩解肌肉緊繃。' },
+        '鋅': { name: '天然酵母鋅', dose: '每日 1 顆', time: '午餐或晚餐後', note: '皮膚修復與免疫力關鍵，吸收率高。' },
+        '薑黃': { name: '薑黃', dose: '每日 2 顆', time: '早餐或午餐後', note: '脂溶性營養，隨餐吃吸收好。' },
+        '鐵': { name: '酵母鐵', dose: '每日 1 顆', time: '早上空腹或早餐後', note: '建議搭配維他命C一起吃，氣色改善更有感。' }
+        // Items NOT in WeBelieve list will be shown in general schedule but not brand section
+    };
+
+    // --- Initialization ---
+
+    function init() {
+        const container = document.getElementById('symptoms-container');
+        symptomsList.forEach(item => {
+            const html = `
+                <label class="checkbox-item">
+                    <input type="checkbox" value="${item.id}"> ${item.label}
+                </label>
+            `;
+            container.innerHTML += html;
+        });
+    }
+
+    // --- Core Logic ---
+
+    function analyzeHealth() {
+        // 1. Get Inputs
+        const gender = document.querySelector('input[name="gender"]:checked').value;
+        const age = document.getElementById('age').value;
+        const checkedSymptoms = Array.from(document.querySelectorAll('#symptoms-container input:checked')).map(cb => cb.value);
+
+        // 2. Base Recommendations (Age/Gender)
+        let needs = new Set();
+        
+        // Base for everyone
+        needs.add('B群'); 
+
+        // Gender/Age Specifics
+        if (gender === 'female') {
+            if (age === '15-25' || age === '26-40') {
+                needs.add('鐵');
+                needs.add('維他命C');
+            } else {
+                needs.add('鈣');
+                needs.add('維他命D3');
+                needs.add('魚油');
+            }
+        } else { // Male
+             needs.add('鋅');
+             if (age === '41-55' || age === '56+') {
+                 needs.add('魚油');
+             }
+        }
+
+        // 3. Symptom Logic
+        checkedSymptoms.forEach(sym => {
+            if (rules[sym]) {
+                rules[sym].forEach(item => needs.add(item));
+            }
+            
+            // Special Logic: Fatigue + Female = Needs Iron
+            if (sym === 'fatigue' && gender === 'female') {
+                needs.add('鐵');
+            }
+        });
+
+        // 4. Render Results
+        renderResults(Array.from(needs));
+    }
+
+    function renderResults(needsList) {
+        // Toggle Sections
+        document.getElementById('assessment-form').style.display = 'none';
+        document.getElementById('result-section').style.display = 'block';
+        window.scrollTo(0, 0);
+
+        // A. Summary
+        document.getElementById('summary-list').innerHTML = needsList.map(item => 
+            `<span style="background:#eefbfb; padding:5px 10px; margin:5px; display:inline-block; border-radius:5px; color:#1F4E79;">${item}</span>`
+        ).join('');
+
+        // B. Schedule Logic
+        const schedule = {
+            '起床空腹': [],
+            '早餐後': [],
+            '午餐後': [],
+            '晚餐後': [],
+            '睡前': [],
+            '運動前後': []
+        };
+
+        const itemMapping = {
+            '膠原蛋白': '起床空腹',
+            '維他命C': '起床空腹', // Or breakfast, but prioritizing synergy
+            '鐵': '起床空腹',
+            '益生菌': '起床空腹',
+            'B群': '早餐後',
+            '薑黃': '早餐後',
+            '維他命D3': '早餐後',
+            '鈣': '午餐後', // Separate from Iron/Breakfast
+            '魚油': '午餐後',
+            '鋅': '午餐後',
+            'Q10': '午餐後',
+            '肌酸': '運動前後',
+            '蛋白質': '運動前後',
+            '鎂': '睡前',
+            'GABA': '睡前',
+            '酵素': '晚餐後',
+            '葉黃素': '早餐後',
+            '生物素': '早餐後',
+            '穀胱甘肽': '睡前'
+        };
+
+        needsList.forEach(item => {
+            let time = itemMapping[item] || '早餐後'; // Default
+            
+            // Conflict Logic: If Iron is present, move Calcium to Lunch/Dinner
+            if (item === '鈣' && needsList.includes('鐵')) {
+                time = '午餐後'; // Ensure separation
+            }
+
+            schedule[time].push(item);
+        });
+
+        // Render Schedule
+        const scheduleContainer = document.getElementById('schedule-container');
+        scheduleContainer.innerHTML = '';
+        for (const [time, items] of Object.entries(schedule)) {
+            if (items.length > 0) {
+                scheduleContainer.innerHTML += `
+                    <div class="schedule-item">
+                        <span class="schedule-time">${time}</span>
+                        ${items.join(' + ')}
+                    </div>
+                `;
+            }
+        }
+
+        // C. WeBelieve Logic
+        const wbContainer = document.getElementById('webelieve-recommendations');
+        wbContainer.innerHTML = '';
+        let hasWbItems = false;
+
+        needsList.forEach(item => {
+            if (weBelieveData[item]) {
+                hasWbItems = true;
+                const info = weBelieveData[item];
+                wbContainer.innerHTML += `
+                    <div style="margin-bottom:15px; border-bottom:1px solid #eee; padding-bottom:10px;">
+                        <strong style="font-size:1.1rem; color:#1F4E79;">${info.name}</strong>
+                        <div style="margin-top:5px;">
+                            <span style="background:#f0f0f0; padding:2px 6px; border-radius:4px; font-size:0.9rem;">${info.dose}</span>
+                            <span style="background:#D5F5E3; padding:2px 6px; border-radius:4px; font-size:0.9rem;">${info.time}</span>
+                        </div>
+                        <div class="note">💡 ${info.note}</div>
+                    </div>
+                `;
+            }
+        });
+
+        if (!hasWbItems) {
+            wbContainer.innerHTML = '<p>目前推薦清單中暫無對應的維補益產品，建議參考上方通用時間表服用。</p>';
+        }
+    }
+
+    function resetForm() {
+        document.getElementById('assessment-form').style.display = 'block';
+        document.getElementById('result-section').style.display = 'none';
+        window.scrollTo(0, 0);
+    }
+
+    // Run init
+    init();
+
+</script>
+
+</body>
+</html>
