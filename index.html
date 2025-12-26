@@ -13,6 +13,8 @@
             --accent-soft-green: #D5F5E3; /* 淺綠區塊 */
             --warning-red: #E74C3C;   /* 警示紅 */
             --mom-pink: #FADBD8;      /* 媽咪粉 */
+            --gold: #D4AC0D;          /* 膠原蛋白金 */
+            --gold-bg: #FCF3CF;       /* 膠原蛋白淺底 */
             --text-dark: #2C3E50;
             --white: #FFFFFF;
         }
@@ -94,7 +96,7 @@
             transform: translateY(-2px);
         }
 
-        /* 特殊選項顏色 (孕婦/素食) */
+        /* 特殊選項顏色 */
         .special-option span { border: 1px dashed var(--primary-dark); background: #fdfdfd; }
 
         select { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #BDC3C7; font-size: 1rem; background: white; }
@@ -125,17 +127,10 @@
             display: flex;
             align-items: flex-start;
         }
-        .alert-box.mom {
-            background-color: var(--mom-pink);
-            color: #922B21;
-            border: 1px solid #E6B0AA;
-        }
-        .alert-box.normal {
-            background-color: #FEF9E7;
-            color: #7D6608;
-            border: 1px solid #F9E79F;
-        }
+        .alert-box.mom { background-color: var(--mom-pink); color: #922B21; border: 1px solid #E6B0AA; }
+        .alert-box.normal { background-color: #FEF9E7; color: #7D6608; border: 1px solid #F9E79F; }
 
+        /* 建議列表卡片 */
         .schedule-card {
             margin: 20px 30px;
             background: white;
@@ -185,17 +180,50 @@
             border-radius: 10px;
             margin-bottom: 10px;
             border-left: 4px solid var(--accent-green);
+            position: relative;
+        }
+        
+        /* 膠原蛋白專屬卡片 */
+        .wb-card.future-product {
+            background: var(--gold-bg);
+            border-left: 4px solid var(--gold);
+        }
+        .badge-future {
+            position: absolute;
+            top: 10px; right: 10px;
+            background: var(--gold);
+            color: white;
+            font-size: 0.8rem;
+            padding: 3px 8px;
+            border-radius: 20px;
+            font-weight: bold;
         }
 
-        .btn-buy {
-            display: block; margin: 30px;
+        /* 購買區塊 */
+        .buy-container {
+            margin: 30px;
             text-align: center;
+        }
+        .buy-info {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+        }
+        .buy-date { color: var(--primary-dark); font-weight: bold; display: block; margin-bottom: 5px; }
+        .ship-date { color: #E67E22; font-weight: bold; font-size: 0.95rem; }
+
+        .btn-buy {
+            display: block; width: 100%;
             background: var(--primary-dark);
             color: white; padding: 18px;
             border-radius: 12px;
             text-decoration: none; font-weight: bold; font-size: 1.1rem;
             box-shadow: 0 5px 20px rgba(31, 78, 121, 0.3);
+            transition: transform 0.1s;
         }
+        .btn-buy:active { transform: scale(0.98); }
 
         .btn-reset {
             display: block; width: 100%; text-align: center;
@@ -271,16 +299,22 @@
         <div id="schedule-list"></div>
 
         <div class="brand-section">
-            <h3 style="color:var(--primary-dark); margin-top:0;">🏆 維補益 (WeBelieve) 選購指南</h3>
+            <h3 style="color:var(--primary-dark); margin-top:0;">🏆 團購選購指南</h3>
             <p style="font-size:0.9rem; color:#666; margin-bottom:20px;">
-                針對您的需求，我們篩選出團購清單中適合您的產品，建議如下：
+                針對您的需求，我們篩選出本次團購適合您的產品：
             </p>
             <div id="wb-list"></div>
         </div>
 
-        <a href="https://www.likepets-official.com/one-page-stores/Leona2512" target="_blank" class="btn-buy">
-            立即前往團購賣場 🛒
-        </a>
+        <div class="buy-container">
+            <div class="buy-info">
+                <span class="buy-date">📅 維補益團購：12/27 - 1/3 限定</span>
+                <span class="ship-date">🚚 預計 2026/01/02 開始出貨</span>
+            </div>
+            <a href="https://www.likepets-official.com/one-page-stores/Leona2512" target="_blank" class="btn-buy">
+                立即前往賣場下單 🛒
+            </a>
+        </div>
         
         <button class="btn-reset" onclick="resetQuiz()">重新測驗</button>
     </div>
@@ -295,18 +329,18 @@
         { id: 'fatigue', label: '容易疲累 🪫' },
         { id: 'pale', label: '氣色不佳 🫥' },
         { id: 'dull_skin', label: '皮膚暗沉蠟黃 🌝' },
+        { id: 'dry_skin', label: '肌膚乾燥/細紋 🪾' },
         { id: 'sleep', label: '睡眠品質差 💤' },
         { id: 'period_pain', label: '經期不適/悶痛 🩸' },
         { id: 'pms', label: '經前易怒/胸漲 🤬' },
         { id: 'cold', label: '手腳冰冷 ❄️' },
         { id: 'constipation', label: '排便不順 💩' },
         { id: 'mood', label: '情緒低落/易怒 🔥' },
-        { id: 'dry_skin', label: '肌膚乾燥 🪾' },
         { id: 'oily_skin', label: '皮脂分泌旺盛 𫝟' },
         { id: 'acne', label: '容易長痘痘 🌋' },
         { id: 'hair_loss', label: '落髮/髮量少 🧑🏻‍🦲' },
         { id: 'eyes', label: '高度用眼者 👁️' },
-        { id: 'workout', label: '有運動習慣 🏋🏻' },
+        { id: 'workout', label: '有運動習慣/關節保養 🏋🏻' },
         { id: 'weight_loss', label: '減重族群 💪🏻' },
         { id: 'alcohol', label: '應酬/飲酒需求 🍺' },
         { id: 'private_part', label: '私密處困擾 💗' },
@@ -318,7 +352,7 @@
         'B群': '含葉酸與B12，寶寶發育與媽咪提神關鍵',
         '維他命C': '抗氧化，促進膠原合成與鐵質吸收',
         '鐵': '補血氣，提供寶寶與媽咪造血原料',
-        '膠原蛋白': '預防妊娠紋，支撐肚皮彈性',
+        '膠原蛋白': '美顏與關鍵靈活雙效保養',
         '益生菌': '建立寶寶免疫基礎，改善媽咪便秘',
         '薑黃': '加強代謝 (⚠️孕期請避開，產後可適量)',
         '葉黃素': '過濾藍光，保護媽咪視力',
@@ -363,47 +397,54 @@
         }
     };
 
-    // 症狀對應規則
+    // 症狀對應規則 (加入膠原蛋白邏輯)
     const rules = {
-        'pregnancy': ['B群', '鐵', '鈣', '魚油', '益生菌', '維他命C'], // 孕期核心
-        'vegetarian': ['B群', '鐵', '鋅', '鈣'], // 素食核心
+        'pregnancy': ['B群', '鐵', '鈣', '魚油', '益生菌', '維他命C'], 
+        'vegetarian': ['B群', '鐵', '鋅', '鈣'],
         'fatigue': ['B群', '鐵', 'Q10'],
-        'pale': ['鐵', '維他命C', 'B群'],
+        'pale': ['鐵', '維他命C', 'B群', '膠原蛋白'],
         'dull_skin': ['穀胱甘肽', '維他命C', '膠原蛋白'],
+        'dry_skin': ['魚油', '膠原蛋白', '維他命C'], // 膠原主戰場
         'sleep': ['鎂', 'GABA'],
         'period_pain': ['鈣', '鎂', '魚油'],
         'pms': ['鈣', '鎂', 'B群'],
         'cold': ['鐵', '薑黃'],
         'constipation': ['鎂', '益生菌'],
         'mood': ['鈣', '鎂', 'B群', '魚油'],
-        'dry_skin': ['魚油', '膠原蛋白'],
         'oily_skin': ['鋅', 'B群'],
         'acne': ['鋅', '魚油', '益生菌'],
         'hair_loss': ['鐵', '鋅', '生物素'],
         'eyes': ['葉黃素', '魚油'],
-        'workout': ['肌酸', 'B群', '魚油'],
+        'workout': ['肌酸', 'B群', '魚油', '膠原蛋白'], // 膠原護關節
         'weight_loss': ['B群', '蛋白質', '益生菌'],
         'alcohol': ['B群', '薑黃'],
         'private_part': ['益生菌'],
         'bad_breath': ['益生菌', '鋅']
     };
 
-    // ⛔️ 禁忌規則：如果選了 Key，就要移除 Value 裡的成分
+    // ⛔️ 禁忌規則
     const contraindications = {
         'pregnancy': ['Q10', '穀胱甘肽', '肌酸', '薑黃', 'A醇'],
-        'vegetarian': ['魚油', '膠原蛋白'] // 除非標示素食，否則預設移除，或提示
-        // 註：這裡假設使用者的魚油/膠原是動物性，若是素食來源可保留，這邊先做嚴格過濾
+        'vegetarian': ['魚油', '膠原蛋白'] 
     };
 
-    // 維補益產品資料
+    // 產品資料 (包含維補益 & 一丸膠原)
     const wbData = {
-        'B群': { name: '天然酵母B群', desc: '早餐後 2 顆｜含葉酸，孕媽咪/備孕必備' },
-        '維他命C': { name: '西印度櫻桃C', desc: '早餐後或空腹 2 顆｜天然來源更溫和' },
-        '鈣': { name: '海藻鈣', desc: '午餐後 2 顆｜素食可食，孕期補鈣首選' },
+        // 維補益系列
+        'B群': { name: '天然酵母B群', desc: '早餐後 2 顆｜含葉酸，天然提神' },
+        '維他命C': { name: '西印度櫻桃C', desc: '早餐後或空腹 2 顆｜7倍吸收力助膠原合成' },
+        '鈣': { name: '海藻鈣', desc: '午餐後 2 顆｜素食可食，高吸收率' },
         '鎂': { name: '天然酵母鎂', desc: '睡前 1-2 顆｜幫助入睡，預防抽筋' },
         '鋅': { name: '天然酵母鋅', desc: '午晚餐後 1 顆｜增強保護力' },
         '薑黃': { name: '薑黃', desc: '餐後 2 顆｜加強代謝 (孕期暫停)' },
-        '鐵': { name: '酵母鐵', desc: '早上空腹 1 顆｜溫和不便秘，孕期必備' }
+        '鐵': { name: '酵母鐵', desc: '早上空腹 1 顆｜溫和不便秘，氣色救星' },
+        
+        // 🌟 重磅新品：膠原蛋白 (獨立標記 isFuture)
+        '膠原蛋白': { 
+            name: '一丸膠原蛋白 (璦研司)', 
+            desc: '早起空腹 1 包｜日本百年製藥級・美顏護關節雙效 (1000Da)',
+            isFuture: true 
+        }
     };
 
     // --- 初始化 ---
@@ -422,7 +463,6 @@
         const gender = document.querySelector('input[name="gender"]:checked').value;
         const age = document.getElementById('age').value;
         
-        // 取得所有勾選的 checkbox (包含一般症狀與特殊身份)
         const allCheckboxes = document.querySelectorAll('input[type="checkbox"]:checked');
         const checkedValues = Array.from(allCheckboxes).map(cb => cb.value);
         
@@ -440,20 +480,17 @@
             if (['41-55', '56+'].includes(age)) needs.add('魚油');
         }
 
-        // 2. 症狀與特殊身份規則疊加
+        // 2. 症狀疊加
         checkedValues.forEach(s => {
             if(rules[s]) rules[s].forEach(n => needs.add(n));
             if(s === 'fatigue' && gender === 'female') needs.add('鐵');
         });
 
-        // 3. ⛔️ 禁忌過濾邏輯 (最重要的一步)
+        // 3. 禁忌過濾
         if (isPregnant) {
             contraindications['pregnancy'].forEach(banned => needs.delete(banned));
         }
         if (isVeg) {
-            // 素食者移除動物性產品 (除非確認是素食來源)
-            // 這裡假設魚油是一般的，建議移除並改推亞麻仁油(但清單沒這個)，
-            // 為求安全先移除魚油與膠原蛋白
             contraindications['vegetarian'].forEach(banned => needs.delete(banned));
         }
 
@@ -478,9 +515,9 @@
                     <span style="font-size:1.5rem; margin-right:10px;">🤰</span>
                     <div>
                         <strong>孕媽咪/哺乳專屬提醒：</strong><br>
-                        1. 系統已自動為您移除 <b>Q10、穀胱甘肽、薑黃</b> 等暫不建議使用的成分。<br>
-                        2. <b>魚油</b>建議在預產期前 2 週暫停食用 (或是諮詢醫師)，哺乳期可恢復食用。<br>
-                        3. <b>維補益的海藻鈣與酵母B群</b> 非常適合孕期補充，請放心食用。
+                        1. 系統已移除 <b>Q10、穀胱甘肽、薑黃</b> 等暫不建議成分。<br>
+                        2. <b>魚油</b>建議在預產期前 2 週暫停食用。<br>
+                        3. <b>維補益海藻鈣與酵母B群</b> 非常適合孕期補充。
                     </div>
                 </div>
             `;
@@ -492,8 +529,8 @@
                     <span style="font-size:1.5rem; margin-right:10px;">🥬</span>
                     <div>
                         <strong>素食者營養筆記：</strong><br>
-                        1. 已加強 <b>B12 (B群) 與 鐵</b> 的補充建議，這是素食者最易缺乏的。<br>
-                        2. 系統移除了魚油與膠原蛋白 (通常為動物性)。若您想補充 Omega-3，建議另外攝取亞麻仁油或藻油。
+                        1. 已加強 <b>B12 (B群) 與 鐵</b> 建議。<br>
+                        2. 系統移除了魚油與膠原蛋白 (動物性)。
                     </div>
                 </div>
             `;
@@ -553,20 +590,41 @@
         let html = '';
         let hasItem = false;
         
-        list.forEach(item => {
-            if (wbData[item]) {
-                hasItem = true;
-                html += `
-                    <div class="wb-card">
-                        <div style="font-weight:bold; color:#1F4E79; font-size:1.1rem; margin-bottom:5px;">
-                            ✅ ${wbData[item].name}
-                        </div>
-                        <div style="font-size:0.95rem; color:#444;">
-                            ${wbData[item].desc}
-                        </div>
+        // 分離現在可買 與 未來產品
+        const currentItems = list.filter(item => wbData[item] && !wbData[item].isFuture);
+        const futureItems = list.filter(item => wbData[item] && wbData[item].isFuture);
+
+        // 渲染維補益現貨
+        currentItems.forEach(item => {
+            hasItem = true;
+            html += `
+                <div class="wb-card">
+                    <div style="font-weight:bold; color:#1F4E79; font-size:1.1rem; margin-bottom:5px;">
+                        ✅ ${wbData[item].name}
                     </div>
-                `;
-            }
+                    <div style="font-size:0.95rem; color:#444;">
+                        ${wbData[item].desc}
+                    </div>
+                </div>
+            `;
+        });
+
+        // 渲染膠原蛋白 (如果有被選中)
+        futureItems.forEach(item => {
+            hasItem = true;
+            html += `
+                <div class="wb-card future-product">
+                    <span class="badge-future">1/27 開團 🔥</span>
+                    <div style="font-weight:bold; color:#9A7D0A; font-size:1.1rem; margin-bottom:5px;">
+                        👑 ${wbData[item].name}
+                    </div>
+                    <div style="font-size:0.9rem; color:#7D6608; line-height:1.5;">
+                        <b>SK-II御用廠原料・1000Da極小分子</b><br>
+                        含鮭魚鼻軟骨(護關節)+7倍吸收微脂囊C。<br>
+                        ${wbData[item].desc}
+                    </div>
+                </div>
+            `;
         });
         
         document.getElementById('wb-list').innerHTML = hasItem ? html : '<p>目前清單中暫無對應的維補益產品</p>';
