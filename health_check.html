@@ -3,20 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>保健品智能診斷</title>
+    <title>個人化營養診斷書</title>
     <style>
-        /* 視覺風格設定 */
+        /* --- 視覺風格設定 --- */
         :root {
             --primary-dark: #1F4E79; /* 深藍 */
-            --primary-light: #D6EAF8; /* 淺藍 */
-            --accent-green: #D5F5E3; /* 淺綠 */
-            --text-dark: #333333;
+            --primary-light: #EBF5FB; /* 極淺藍背景 */
+            --accent-green: #2ECC71; /* 鮮綠 */
+            --accent-soft-green: #D5F5E3; /* 淺綠區塊 */
+            --text-dark: #2C3E50;
             --white: #FFFFFF;
         }
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Microsoft JhengHei", "Segoe UI", Roboto, sans-serif;
-            background-color: #F4F7F6;
+            background-color: #F4F6F7;
             color: var(--text-dark);
             margin: 0;
             padding: 20px;
@@ -24,200 +25,159 @@
         }
 
         .container {
-            max-width: 600px;
+            max-width: 700px;
             margin: 0 auto;
             background: var(--white);
             border-radius: 20px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
             overflow: hidden;
         }
 
-        /* 頂部標題區 */
+        /* Header */
         header {
             background: linear-gradient(135deg, #fff 0%, var(--primary-light) 100%);
-            padding: 40px 20px;
+            padding: 40px 25px;
             text-align: center;
-            border-bottom: 5px solid var(--accent-green);
+            border-bottom: 4px solid var(--accent-green);
         }
 
-        h1 {
-            color: var(--primary-dark);
-            margin: 0;
-            font-size: 1.8rem;
-        }
+        h1 { color: var(--primary-dark); margin: 0; font-size: 1.8rem; letter-spacing: 1px; }
+        p.subtitle { color: #5D6D7E; margin-top: 10px; font-size: 0.95rem; }
 
-        p.subtitle {
-            color: #666;
-            margin-top: 10px;
-            font-size: 0.9rem;
-        }
-
-        /* 表單區域 */
-        .content-box {
-            padding: 30px;
-        }
-
-        .question-block {
-            margin-bottom: 25px;
-        }
-
+        /* 測驗區塊 */
+        .content-box { padding: 30px; }
+        .question-block { margin-bottom: 30px; } /* 增加題組間距 */
+        
         label.q-title {
             display: block;
             font-weight: bold;
             color: var(--primary-dark);
-            margin-bottom: 12px;
+            margin-bottom: 15px;
             font-size: 1.1rem;
-            border-left: 4px solid var(--accent-green);
-            padding-left: 10px;
+            border-left: 5px solid var(--accent-green);
+            padding-left: 12px;
         }
 
-        /* 選項按鈕樣式 */
-        .radio-group, .checkbox-group {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
+        /* 按鈕與選項格線設定 (已加大間距) */
+        .option-grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); /* 稍微加寬最小寬度 */
+            gap: 15px; /* 加大間距，解決重疊問題 */
         }
-
-        .option-btn {
-            position: relative;
-            cursor: pointer;
-        }
-
-        .option-btn input {
-            display: none; /* 隱藏原本的醜醜勾選框 */
-        }
-
+        
+        .option-btn { position: relative; cursor: pointer; }
+        .option-btn input { display: none; }
         .option-btn span {
-            display: inline-block;
-            padding: 10px 15px;
-            background: #f8f9fa;
-            border: 1px solid #eee;
-            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center; /* 文字置中 */
+            padding: 15px 10px;
+            background: #FAFAFA;
+            border: 1px solid #E5E7E9;
+            border-radius: 12px;
             transition: all 0.2s;
             font-size: 0.95rem;
+            text-align: center;
+            height: 100%;
+            box-sizing: border-box; /* 確保padding不影響寬度 */
+            line-height: 1.4;
         }
 
-        /* 選中時的效果 */
         .option-btn input:checked + span {
             background: var(--primary-dark);
             color: white;
             border-color: var(--primary-dark);
-            box-shadow: 0 4px 10px rgba(31, 78, 121, 0.3);
-        }
-
-        select {
-            width: 100%;
-            padding: 12px;
-            border-radius: 8px;
-            border: 1px solid #ccc;
-            font-size: 1rem;
-            background: white;
-        }
-
-        /* 按鈕 */
-        .btn-submit {
-            width: 100%;
-            padding: 16px;
-            background-color: var(--accent-green);
-            color: var(--primary-dark);
-            border: none;
-            border-radius: 12px;
-            font-size: 1.2rem;
+            box-shadow: 0 4px 12px rgba(31, 78, 121, 0.25);
             font-weight: bold;
-            cursor: pointer;
-            margin-top: 20px;
+            transform: translateY(-2px); /* 選中時微微浮起 */
+        }
+
+        select { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #BDC3C7; font-size: 1rem; background: white; }
+
+        .btn-submit {
+            width: 100%; padding: 16px;
+            background-color: var(--accent-green);
+            color: white;
+            border: none; border-radius: 12px;
+            font-size: 1.2rem; font-weight: bold;
+            cursor: pointer; margin-top: 30px;
+            box-shadow: 0 4px 15px rgba(46, 204, 113, 0.3);
             transition: transform 0.1s;
         }
-
-        .btn-submit:active {
-            transform: scale(0.98);
-        }
+        .btn-submit:active { transform: scale(0.98); }
 
         /* 結果頁樣式 */
-        #result-page {
-            display: none;
-            padding: 30px;
+        #result-page { display: none; padding: 0; }
+        
+        .result-header { padding: 30px 30px 10px 30px; background: var(--white); }
+
+        .schedule-card {
+            margin: 20px 30px;
+            background: white;
+            border-radius: 15px;
+            border: 1px solid #EAECEE;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.03);
+            overflow: hidden;
         }
 
-        .result-card {
-            background: #fff;
-            border: 2px solid var(--accent-green);
-            border-radius: 12px;
-            padding: 20px;
-            margin-bottom: 20px;
-        }
-
-        .schedule-row {
-            display: flex;
-            margin-bottom: 15px;
-            border-bottom: 1px solid #eee;
-            padding-bottom: 10px;
-        }
-
-        .time-tag {
+        .time-header {
             background: var(--primary-dark);
             color: white;
-            padding: 4px 8px;
-            border-radius: 6px;
-            font-size: 0.85rem;
-            height: fit-content;
-            margin-right: 15px;
-            white-space: nowrap;
-        }
-
-        .items-text {
-            color: #333;
-            font-weight: 500;
-            line-height: 1.6;
-        }
-
-        .we-believe-section {
-            background-color: #fcfcfc;
-            border: 2px dashed var(--primary-dark);
-            padding: 20px;
-            border-radius: 12px;
-            margin-top: 25px;
-        }
-
-        .wb-item {
-            margin-bottom: 15px;
-        }
-        
-        .wb-title {
-            color: var(--primary-dark);
+            padding: 10px 20px;
             font-weight: bold;
             font-size: 1.1rem;
+            display: flex; justify-content: space-between; align-items: center;
         }
 
-        .wb-detail {
+        .synergy-box {
+            background: var(--accent-soft-green);
+            padding: 12px 20px;
             font-size: 0.9rem;
-            color: #555;
-            margin-top: 4px;
+            color: #145A32;
+            border-bottom: 1px solid #EAECEE;
+        }
+        
+        .synergy-title { font-weight: bold; margin-bottom: 3px; display: block; }
+
+        .item-list { padding: 15px 20px; }
+
+        .supplement-item {
+            display: flex; margin-bottom: 10px; padding-bottom: 10px;
+            border-bottom: 1px dashed #eee; align-items: flex-start;
+        }
+        .supplement-item:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+
+        .supp-name { font-weight: bold; color: var(--primary-dark); min-width: 90px; }
+        .supp-desc { font-size: 0.9rem; color: #555; flex: 1; }
+
+        /* 維補益專區 */
+        .brand-section {
+            background-color: #FDFEFE;
+            padding: 30px;
+            border-top: 4px solid var(--primary-dark);
+        }
+        .wb-card {
+            background: #F4F6F7;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            border-left: 4px solid var(--accent-green);
         }
 
         .btn-buy {
-            display: block;
-            width: 100%;
+            display: block; margin: 30px;
             text-align: center;
             background: var(--primary-dark);
-            color: white;
-            padding: 15px;
-            border-radius: 10px;
-            text-decoration: none;
-            font-weight: bold;
-            margin-top: 20px;
+            color: white; padding: 18px;
+            border-radius: 12px;
+            text-decoration: none; font-weight: bold; font-size: 1.1rem;
+            box-shadow: 0 5px 20px rgba(31, 78, 121, 0.3);
         }
-        
+
         .btn-reset {
-            display: block;
-            text-align: center;
-            margin-top: 15px;
-            color: #999;
-            text-decoration: underline;
-            cursor: pointer;
-            background: none;
-            border: none;
-            width: 100%;
+            display: block; width: 100%; text-align: center;
+            padding: 20px; color: #999; background: none; border: none;
+            cursor: pointer; text-decoration: underline;
         }
 
     </style>
@@ -228,29 +188,29 @@
     
     <div id="quiz-page">
         <header>
-            <h1>我應該吃的保健品是？</h1>
-            <p class="subtitle">30秒快速檢測，量身打造您的營養補給方案</p>
+            <h1>🩺 個人化營養診斷</h1>
+            <p class="subtitle">30秒找出您現在真正需要的營養素</p>
         </header>
 
         <div class="content-box">
             <div class="question-block">
                 <label class="q-title">1. 您的性別</label>
-                <div class="radio-group">
+                <div class="option-grid">
                     <label class="option-btn">
                         <input type="radio" name="gender" value="female" checked>
-                        <span>我是女生 👩</span>
+                        <span>女性 👩🏻</span>
                     </label>
                     <label class="option-btn">
                         <input type="radio" name="gender" value="male">
-                        <span>我是男生 👨</span>
+                        <span>男性 👦🏻</span>
                     </label>
                 </div>
             </div>
 
             <div class="question-block">
-                <label class="q-title">2. 您的年齡</label>
+                <label class="q-title">2. 您的年齡層</label>
                 <select id="age">
-                    <option value="15-25">15 - 25 歲 (學生/青春期)</option>
+                    <option value="15-25">15 - 25 歲 (學生/發育期)</option>
                     <option value="26-40" selected>26 - 40 歲 (職場/輕熟齡)</option>
                     <option value="41-55">41 - 55 歲 (熟齡/更年期)</option>
                     <option value="56+">56 歲以上 (銀髮保養)</option>
@@ -258,33 +218,33 @@
             </div>
 
             <div class="question-block">
-                <label class="q-title">3. 最近的困擾或習慣 (可複選)</label>
-                <div class="checkbox-group" id="symptoms-container">
+                <label class="q-title">3. 您最近的困擾或狀態 (可複選)</label>
+                <div class="option-grid" id="symptoms-container">
                     </div>
             </div>
 
-            <button class="btn-submit" onclick="showResults()">查看我的專屬建議 👉</button>
+            <button class="btn-submit" onclick="showResults()">查看完整診斷報告 👉</button>
         </div>
     </div>
 
     <div id="result-page">
-        <header style="padding: 20px;">
-            <h1>📋 您的營養診斷書</h1>
-        </header>
-
-        <div class="result-card">
-            <h3 style="margin-top:0; color:#1F4E79;">⏰ 建議服用時間表</h3>
-            <div id="schedule-list"></div>
+        <div class="result-header">
+            <h2 style="color:var(--primary-dark); margin:0;">📋 您的專屬處方籤</h2>
+            <p style="color:#666; font-size:0.9rem;">以下是為您量身打造的服用時間表與成分解析</p>
         </div>
 
-        <div class="we-believe-section">
-            <h3 style="margin-top:0; color:#1F4E79;">🏆 維補益 (WeBelieve) 專屬推薦</h3>
-            <p style="font-size:0.9rem; margin-bottom:15px;">根據您的狀況，這些是維補益有的品項，建議這樣吃效果最好：</p>
+        <div id="schedule-list"></div>
+
+        <div class="brand-section">
+            <h3 style="color:var(--primary-dark); margin-top:0;">🏆 維補益 (WeBelieve) 選購指南</h3>
+            <p style="font-size:0.9rem; color:#666; margin-bottom:20px;">
+                針對您的需求，我們篩選出團購清單中適合您的產品，建議如下：
+            </p>
             <div id="wb-list"></div>
         </div>
 
         <a href="https://www.likepets-official.com/one-page-stores/Leona2512" target="_blank" class="btn-buy">
-            前往賣場選購 🛒
+            立即前往團購賣場 🛒
         </a>
         
         <button class="btn-reset" onclick="resetQuiz()">重新測驗</button>
@@ -293,64 +253,113 @@
 </div>
 
 <script>
-    // --- 資料設定區 ---
+    // --- 1. 資料庫設定 ---
+
+    // 困擾選項 (依照您的最新清單更新)
     const symptoms = [
-        { id: 'alcohol', label: '🍺 飲酒習慣' },
-        { id: 'smoke', label: '🚬 吸菸習慣' },
-        { id: 'period_pain', label: '🩸 經期不適 (悶痛)' },
-        { id: 'pms', label: '😡 經前症候群 (易怒/胸漲)' },
-        { id: 'constipation', label: '💩 排便不順' },
-        { id: 'pale', label: '👻 氣色不佳 (蒼白)' },
-        { id: 'dull_skin', label: '🌝 皮膚蠟黃/暗沉' },
-        { id: 'private_part', label: '👙 私密處發炎/感染' },
-        { id: 'sensitive_skin', label: '🌵 敏感肌' },
-        { id: 'weight_loss', label: '⚖️ 減重族群' },
-        { id: 'workout', label: '🏋️ 有運動習慣' },
-        { id: 'acne', label: '🌋 痘痘肌' },
-        { id: 'dry_skin', label: '🍂 皮膚乾癢' },
-        { id: 'oily_skin', label: '🍳 油脂分泌旺盛' },
-        { id: 'hair_loss', label: '💇‍♀️ 落髮/髮量稀疏' },
-        { id: 'fatigue', label: '🔋 容易疲累' },
-        { id: 'cold', label: '❄️ 怕冷/手腳冰冷' },
-        { id: 'sleep', label: '💤 睡眠障礙' },
-        { id: 'eyes', label: '👀 高度用眼/3C族' }
+        { id: 'fatigue', label: '容易疲累 🪫' },
+        { id: 'pale', label: '氣色不佳 🫥' },
+        { id: 'dull_skin', label: '皮膚暗沉蠟黃 🌝' },
+        { id: 'sleep', label: '睡眠品質差 💤' },
+        { id: 'period_pain', label: '經期不適/悶痛 🩸' },
+        { id: 'pms', label: '經前易怒/胸漲 🤬' },
+        { id: 'cold', label: '手腳冰冷 ❄️' },
+        { id: 'constipation', label: '排便不順 💩' },
+        { id: 'mood', label: '情緒低落/易怒 🔥' },
+        { id: 'dry_skin', label: '肌膚乾燥 🪾' },
+        { id: 'oily_skin', label: '皮脂分泌旺盛 𫝟' },
+        { id: 'acne', label: '容易長痘痘 🌋' },
+        { id: 'hair_loss', label: '落髮/髮量少 🧑🏻‍🦲' },
+        { id: 'eyes', label: '高度用眼者 👁️' },
+        { id: 'workout', label: '有運動習慣 🏋🏻' },
+        { id: 'weight_loss', label: '減重族群 💪🏻' },
+        { id: 'alcohol', label: '應酬/飲酒需求 🍺' },
+        { id: 'private_part', label: '私密處困擾 💗' },
+        { id: 'bad_breath', label: '口腔氣味重 👄' }
     ];
 
-    // 對應規則
+    // 成分詳細功效
+    const ingredientInfo = {
+        'B群': '啟動身體能量代謝，穩定神經',
+        '維他命C': '抗氧化，促進膠原合成與鐵質吸收',
+        '鐵': '補血氣，改善蒼白與疲勞',
+        '膠原蛋白': '支撐皮膚彈性，保水',
+        '益生菌': '調整腸道菌叢，改善口腔氣味與排便',
+        '薑黃': '加強代謝，減少身體慢性發炎',
+        '葉黃素': '過濾藍光，保護黃斑部',
+        '生物素': '頭髮與指甲的關鍵原料',
+        '鈣': '穩定神經，預防骨質流失',
+        '鎂': '天然放鬆劑，改善睡眠與情緒',
+        '魚油': '抗發炎(紅腫痘)，保護心血管',
+        '鋅': '修復黏膜與皮膚，控制油脂',
+        'Q10': '心臟動力來源，提升活力',
+        '肌酸': '提升肌肉爆發力與含水量',
+        '蛋白質': '修復肌肉，避免代謝下降',
+        'GABA': '抑制過度興奮神經，助眠',
+        '穀胱甘肽': '強力抗氧化，亮白護肝'
+    };
+
+    // 時間段組合說明
+    const timeSlotSynergy = {
+        '起床空腹': {
+            title: '☀️ 開啟吸收的黃金期',
+            desc: '空腹時胃酸少，膠原蛋白與鐵(搭配C)吸收率大幅提升。'
+        },
+        '早餐後': {
+            title: '🚀 啟動一日能量',
+            desc: 'B群與薑黃幫助早餐轉化能量。葉黃素跟著油脂吃吸收更好。'
+        },
+        '午餐後': {
+            title: '🛡️ 強化防護與抗炎',
+            desc: '鈣片移到午餐避開鐵劑競爭。魚油隨餐吃，幫助下午專注抗炎。'
+        },
+        '運動前後': {
+            title: '💪 肌肉修復黃金窗',
+            desc: '肌酸與蛋白質即時回補肌肉損耗。'
+        },
+        '睡前': {
+            title: '🌙 神經放鬆與修復',
+            desc: '鎂與GABA關閉緊繃神經。肝臟排毒期適合穀胱甘肽。'
+        }
+    };
+
+    // 症狀對應規則
     const rules = {
-        'alcohol': ['B群', '薑黃'],
-        'smoke': ['維他命C'],
-        'period_pain': ['鈣', '鎂', '魚油'],
-        'pms': ['鈣', '鎂', 'B群'],
-        'constipation': ['鎂', '益生菌'],
+        'fatigue': ['B群', '鐵', 'Q10'],
         'pale': ['鐵', '維他命C', 'B群'],
         'dull_skin': ['穀胱甘肽', '維他命C', '膠原蛋白'],
-        'private_part': ['私密處益生菌', '蔓越莓'],
-        'sensitive_skin': ['魚油', '益生菌'],
-        'weight_loss': ['B群', '蛋白質', '益生菌'],
-        'workout': ['肌酸', 'B群', '魚油'],
-        'acne': ['鋅', '魚油', '益生菌'],
-        'dry_skin': ['魚油', '膠原蛋白'],
-        'oily_skin': ['鋅'],
-        'hair_loss': ['鐵', '鋅', '生物素'],
-        'fatigue': ['B群', '鐵', 'Q10'],
-        'cold': ['鐵', '薑黃'],
         'sleep': ['鎂', 'GABA'],
-        'eyes': ['葉黃素', '魚油']
+        'period_pain': ['鈣', '鎂', '魚油'],
+        'pms': ['鈣', '鎂', 'B群'],
+        'cold': ['鐵', '薑黃'],
+        'constipation': ['鎂', '益生菌'],
+        'mood': ['鈣', '鎂', 'B群', '魚油'], // 新增：情緒低落
+        'dry_skin': ['魚油', '膠原蛋白'],
+        'oily_skin': ['鋅', 'B群'],
+        'acne': ['鋅', '魚油', '益生菌'],
+        'hair_loss': ['鐵', '鋅', '生物素'],
+        'eyes': ['葉黃素', '魚油'],
+        'workout': ['肌酸', 'B群', '魚油'],
+        'weight_loss': ['B群', '蛋白質', '益生菌'],
+        'alcohol': ['B群', '薑黃'],
+        'private_part': ['益生菌'],
+        'bad_breath': ['益生菌', '鋅'] // 新增：口腔氣味 (通常缺鋅或腸胃不好)
     };
 
-    // 維補益產品資料庫
+    // 維補益產品資料
     const wbData = {
-        'B群': { name: '天然酵母B群', desc: '早餐後 2 顆｜提神且天然' },
-        '維他命C': { name: '西印度櫻桃C', desc: '早餐後或空腹 2 顆｜助膠原蛋白吸收' },
-        '鈣': { name: '海藻鈣', desc: '早晚各 1 顆｜分開吃吸收最好' },
-        '鎂': { name: '天然酵母鎂', desc: '睡前 1-2 顆｜放鬆助眠' },
-        '鋅': { name: '天然酵母鋅', desc: '午晚餐後 1 顆｜修復皮膚' },
+        'B群': { name: '天然酵母B群', desc: '早餐後 2 顆｜提神不燥熱' },
+        '維他命C': { name: '西印度櫻桃C', desc: '早餐後或空腹 2 顆｜助膠原吸收' },
+        '鈣': { name: '海藻鈣', desc: '午餐後 2 顆｜高吸收率' },
+        '鎂': { name: '天然酵母鎂', desc: '睡前 1-2 顆｜放鬆好眠' },
+        '鋅': { name: '天然酵母鋅', desc: '午晚餐後 1 顆｜修復皮膚/黏膜' },
         '薑黃': { name: '薑黃', desc: '餐後 2 顆｜加強代謝' },
-        '鐵': { name: '酵母鐵', desc: '早上空腹 1 顆｜補氣色' }
+        '鐵': { name: '酵母鐵', desc: '早上空腹 1 顆｜氣色救星' }
     };
 
-    // 初始化：產生選項
+    // --- 2. 初始化與邏輯 ---
+
+    // 產生選項
     const container = document.getElementById('symptoms-container');
     symptoms.forEach(item => {
         container.innerHTML += `
@@ -366,9 +375,9 @@
         const age = document.getElementById('age').value;
         const checked = Array.from(document.querySelectorAll('#symptoms-container input:checked')).map(cb => cb.value);
         
-        let needs = new Set(['B群']); // 所有人基礎
+        let needs = new Set(['B群']); // 基礎
 
-        // 基礎規則
+        // 性別規則
         if (gender === 'female') {
             if (['15-25', '26-40'].includes(age)) { needs.add('鐵'); needs.add('維他命C'); }
             else { needs.add('鈣'); needs.add('魚油'); }
@@ -398,44 +407,69 @@
             '早餐後': ['B群', '薑黃', '葉黃素', '生物素'],
             '午餐後': ['鈣', '魚油', '鋅', 'Q10'],
             '運動前後': ['肌酸', '蛋白質'],
-            '睡前': ['鎂', 'GABA', '穀胱甘肽', '酵素']
+            '睡前': ['鎂', 'GABA', '穀胱甘肽']
         };
 
-        // 特殊邏輯：有鐵的話，鈣移到午餐
-        if (list.includes('鐵')) {
-             // 邏輯已在上方 timeMap 預設分開，不需額外調整，維補益鈣建議分開吃
-        }
-
         let html = '';
+        
         for (let [time, items] of Object.entries(timeMap)) {
-            // 過濾出使用者需要的
             const userItems = items.filter(i => list.includes(i));
+            
             if (userItems.length > 0) {
+                let itemsHtml = userItems.map(item => `
+                    <div class="supplement-item">
+                        <div class="supp-name">● ${item}</div>
+                        <div class="supp-desc">${ingredientInfo[item] || ''}</div>
+                    </div>
+                `).join('');
+
+                let synergyHtml = '';
+                if (timeSlotSynergy[time]) {
+                    synergyHtml = `
+                        <div class="synergy-box">
+                            <span class="synergy-title">💡 為什麼這時候一起吃？</span>
+                            ${timeSlotSynergy[time].desc}
+                        </div>
+                    `;
+                }
+
                 html += `
-                    <div class="schedule-row">
-                        <div class="time-tag">${time}</div>
-                        <div class="items-text">${userItems.join(' + ')}</div>
+                    <div class="schedule-card">
+                        <div class="time-header">
+                            <span>${time}</span>
+                            <span style="font-size:0.8rem; background:rgba(255,255,255,0.2); padding:2px 8px; border-radius:10px;">${userItems.length} 項</span>
+                        </div>
+                        ${synergyHtml}
+                        <div class="item-list">
+                            ${itemsHtml}
+                        </div>
                     </div>
                 `;
             }
         }
-        document.getElementById('schedule-list').innerHTML = html || '<p>請先勾選您的狀況</p>';
+        document.getElementById('schedule-list').innerHTML = html || '<p style="text-align:center; padding:20px;">請先勾選您的狀況</p>';
     }
 
     function renderWb(list) {
         let html = '';
         let hasItem = false;
+        
         list.forEach(item => {
             if (wbData[item]) {
                 hasItem = true;
                 html += `
-                    <div class="wb-item">
-                        <div class="wb-title">✅ ${wbData[item].name}</div>
-                        <div class="wb-detail">建議吃法：${wbData[item].desc}</div>
+                    <div class="wb-card">
+                        <div style="font-weight:bold; color:#1F4E79; font-size:1.1rem; margin-bottom:5px;">
+                            ✅ ${wbData[item].name}
+                        </div>
+                        <div style="font-size:0.95rem; color:#444;">
+                            ${wbData[item].desc}
+                        </div>
                     </div>
                 `;
             }
         });
+        
         document.getElementById('wb-list').innerHTML = hasItem ? html : '<p>目前清單中暫無對應的維補益產品</p>';
     }
 
