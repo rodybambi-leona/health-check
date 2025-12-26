@@ -15,6 +15,7 @@
             --mom-pink: #FADBD8;      /* 媽咪粉 */
             --gold: #D4AC0D;          /* 膠原蛋白金 */
             --gold-bg: #FCF3CF;       /* 膠原蛋白淺底 */
+            --purple-light: #E8DAEF;  /* 猛健樂紫 */
             --text-dark: #2C3E50;
             --white: #FFFFFF;
         }
@@ -98,6 +99,12 @@
 
         /* 特殊選項顏色 */
         .special-option span { border: 1px dashed var(--primary-dark); background: #fdfdfd; }
+        
+        /* 猛健樂專屬色 */
+        .mounjaro-option input:checked + span {
+            background: #8E44AD; 
+            border-color: #8E44AD;
+        }
 
         select { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #BDC3C7; font-size: 1rem; background: white; }
 
@@ -129,6 +136,7 @@
         }
         .alert-box.mom { background-color: var(--mom-pink); color: #922B21; border: 1px solid #E6B0AA; }
         .alert-box.normal { background-color: #FEF9E7; color: #7D6608; border: 1px solid #F9E79F; }
+        .alert-box.mounjaro { background-color: var(--purple-light); color: #5B2C6F; border: 1px solid #D2B4DE; }
 
         /* 建議列表卡片 */
         .schedule-card {
@@ -183,7 +191,6 @@
             position: relative;
         }
         
-        /* 膠原蛋白專屬卡片 */
         .wb-card.future-product {
             background: var(--gold-bg);
             border-left: 4px solid var(--gold);
@@ -273,7 +280,11 @@
                 <div class="option-grid" style="margin-bottom:15px;">
                      <label class="option-btn special-option">
                         <input type="checkbox" value="pregnancy">
-                        <span style="color:#C0392B;">🤱🏻 孕期/哺乳媽咪</span>
+                        <span style="color:#C0392B;">🤰🏻 孕期/哺乳媽咪</span>
+                    </label>
+                    <label class="option-btn special-option mounjaro-option">
+                        <input type="checkbox" value="mounjaro">
+                        <span style="color:#5B2C6F;">猛健樂療程中 💉</span>
                     </label>
                     <label class="option-btn special-option">
                         <input type="checkbox" value="vegetarian">
@@ -347,25 +358,45 @@
         { id: 'bad_breath', label: '口腔氣味重 👄' }
     ];
 
-    // 成分詳細功效
-    const ingredientInfo = {
-        'B群': '含葉酸與B12，寶寶發育與媽咪提神關鍵',
-        '維他命C': '抗氧化，促進膠原合成與鐵質吸收',
-        '鐵': '補血氣，提供寶寶與媽咪造血原料',
-        '膠原蛋白': '美顏與關鍵靈活雙效保養',
-        '益生菌': '建立寶寶免疫基礎，改善媽咪便秘',
-        '薑黃': '加強代謝 (⚠️孕期請避開，產後可適量)',
-        '葉黃素': '過濾藍光，保護媽咪視力',
-        '生物素': '產後落髮救星',
-        '鈣': '一人吃兩人補，預防抽筋與骨質流失',
+    // 成分詳細功效 - 兩套版本 (一般 VS 孕媽咪)
+    const ingredientInfoGeneral = {
+        'B群': '啟動身體能量代謝，消除疲勞、穩定神經',
+        '維他命C': '抗氧化，促進膠原合成，提升保護力',
+        '鐵': '補血氣，改善臉色蒼白與手腳冰冷',
+        '膠原蛋白': '美顏保濕，維持皮膚彈性與關節靈活',
+        '益生菌': '調整腸道菌叢，改善便秘與口氣',
+        '薑黃': '加強代謝，減少身體慢性發炎',
+        '葉黃素': '過濾藍光，保護黃斑部，舒緩眼壓',
+        '生物素': '頭髮與指甲的關鍵原料，預防斷裂',
+        '鈣': '穩定神經與肌肉，預防骨質流失',
         '鎂': '天然放鬆劑，改善睡眠與肌肉緊繃',
-        '魚油': '補充DHA幫助寶寶腦部發育',
-        '鋅': '修復黏膜，產後傷口癒合',
-        'Q10': '心臟動力 (⚠️孕期/哺乳暫停)',
-        '肌酸': '肌肉爆發力 (⚠️孕期/哺乳暫停)',
-        '蛋白質': '修復組織，乳汁分泌原料',
-        'GABA': '抑制神經興奮，助眠',
-        '穀胱甘肽': '美白 (⚠️孕期/哺乳暫停)'
+        '魚油': '抗發炎(紅腫痘)，保護心血管與思緒清晰',
+        '鋅': '修復黏膜與皮膚，控制油脂分泌',
+        'Q10': '心臟動力來源，提升細胞活力',
+        '肌酸': '提升肌肉爆發力，幫助肌肉留住水分',
+        '蛋白質': '修復肌肉組織，避免代謝下降',
+        'GABA': '抑制過度興奮的神經，幫助入睡',
+        '穀胱甘肽': '強力抗氧化，幫助肝臟解毒與亮白'
+    };
+
+    const ingredientInfoMom = {
+        'B群': '含葉酸與B12，寶寶發育關鍵，媽咪提神必備',
+        '維他命C': '抗氧化，促進鐵質吸收，增強媽咪保護力',
+        '鐵': '一人吃兩人補，提供寶寶造血原料，預防媽咪貧血',
+        '膠原蛋白': '預防妊娠紋，支撐肚皮彈性，產後恢復',
+        '益生菌': '建立寶寶免疫基礎，改善媽咪孕期便秘',
+        '薑黃': '⚠️ 孕期不建議食用 (產後可適量)',
+        '葉黃素': '保護媽咪視力，透過乳汁提供寶寶護眼營養',
+        '生物素': '產後落髮救星，維持頭髮健康',
+        '鈣': '預防媽咪抽筋，提供寶寶骨骼發育原料',
+        '鎂': '舒緩孕期腿部緊繃，幫助入睡',
+        '魚油': '補充DHA幫助寶寶腦部發育 (⚠️預產期前暫停)',
+        '鋅': '修復黏膜，幫助產後傷口癒合',
+        'Q10': '⚠️ 孕期/哺乳期暫不建議食用',
+        '肌酸': '⚠️ 孕期/哺乳期暫不建議食用',
+        '蛋白質': '寶寶生長原料，促進乳汁分泌',
+        'GABA': '舒緩孕期焦慮，幫助入睡',
+        '穀胱甘肽': '⚠️ 孕期/哺乳期暫不建議食用'
     };
 
     // 時間段組合說明
@@ -397,14 +428,15 @@
         }
     };
 
-    // 症狀對應規則 (加入膠原蛋白邏輯)
+    // 症狀對應規則
     const rules = {
         'pregnancy': ['B群', '鐵', '鈣', '魚油', '益生菌', '維他命C'], 
+        'mounjaro': ['B群', '鈣', '肌酸', '鎂', '蛋白質'], // 猛健樂專屬
         'vegetarian': ['B群', '鐵', '鋅', '鈣'],
         'fatigue': ['B群', '鐵', 'Q10'],
         'pale': ['鐵', '維他命C', 'B群', '膠原蛋白'],
         'dull_skin': ['穀胱甘肽', '維他命C', '膠原蛋白'],
-        'dry_skin': ['魚油', '膠原蛋白', '維他命C'], // 膠原主戰場
+        'dry_skin': ['魚油', '膠原蛋白', '維他命C'],
         'sleep': ['鎂', 'GABA'],
         'period_pain': ['鈣', '鎂', '魚油'],
         'pms': ['鈣', '鎂', 'B群'],
@@ -415,7 +447,7 @@
         'acne': ['鋅', '魚油', '益生菌'],
         'hair_loss': ['鐵', '鋅', '生物素'],
         'eyes': ['葉黃素', '魚油'],
-        'workout': ['肌酸', 'B群', '魚油', '膠原蛋白'], // 膠原護關節
+        'workout': ['肌酸', 'B群', '魚油', '膠原蛋白'],
         'weight_loss': ['B群', '蛋白質', '益生菌'],
         'alcohol': ['B群', '薑黃'],
         'private_part': ['益生菌'],
@@ -428,9 +460,8 @@
         'vegetarian': ['魚油', '膠原蛋白'] 
     };
 
-    // 產品資料 (包含維補益 & 一丸膠原)
+    // 產品資料
     const wbData = {
-        // 維補益系列
         'B群': { name: '天然酵母B群', desc: '早餐後 2 顆｜含葉酸，天然提神' },
         '維他命C': { name: '西印度櫻桃C', desc: '早餐後或空腹 2 顆｜7倍吸收力助膠原合成' },
         '鈣': { name: '海藻鈣', desc: '午餐後 2 顆｜素食可食，高吸收率' },
@@ -438,8 +469,6 @@
         '鋅': { name: '天然酵母鋅', desc: '午晚餐後 1 顆｜增強保護力' },
         '薑黃': { name: '薑黃', desc: '餐後 2 顆｜加強代謝 (孕期暫停)' },
         '鐵': { name: '酵母鐵', desc: '早上空腹 1 顆｜溫和不便秘，氣色救星' },
-        
-        // 🌟 重磅新品：膠原蛋白 (獨立標記 isFuture)
         '膠原蛋白': { 
             name: '一丸膠原蛋白 (璦研司)', 
             desc: '早起空腹 1 包｜日本百年製藥級・美顏護關節雙效 (1000Da)',
@@ -459,19 +488,18 @@
     });
 
     function showResults() {
-        // 取得輸入
         const gender = document.querySelector('input[name="gender"]:checked').value;
         const age = document.getElementById('age').value;
-        
         const allCheckboxes = document.querySelectorAll('input[type="checkbox"]:checked');
         const checkedValues = Array.from(allCheckboxes).map(cb => cb.value);
         
         const isPregnant = checkedValues.includes('pregnancy');
         const isVeg = checkedValues.includes('vegetarian');
+        const isMounjaro = checkedValues.includes('mounjaro');
 
         let needs = new Set(['B群']); // 所有人基礎
 
-        // 1. 性別規則
+        // 1. 性別與年齡
         if (gender === 'female') {
             if (['15-25', '26-40'].includes(age)) { needs.add('鐵'); needs.add('維他命C'); }
             else { needs.add('鈣'); needs.add('魚油'); }
@@ -480,7 +508,7 @@
             if (['41-55', '56+'].includes(age)) needs.add('魚油');
         }
 
-        // 2. 症狀疊加
+        // 2. 症狀規則疊加
         checkedValues.forEach(s => {
             if(rules[s]) rules[s].forEach(n => needs.add(n));
             if(s === 'fatigue' && gender === 'female') needs.add('鐵');
@@ -496,8 +524,9 @@
 
         const finalNeeds = Array.from(needs);
         
-        renderAlerts(isPregnant, isVeg);
-        renderSchedule(finalNeeds);
+        renderAlerts(isPregnant, isVeg, isMounjaro);
+        // 傳入是否懷孕，決定顯示哪一套說明
+        renderSchedule(finalNeeds, isPregnant);
         renderWb(finalNeeds);
 
         document.getElementById('quiz-page').style.display = 'none';
@@ -505,14 +534,14 @@
         window.scrollTo(0,0);
     }
 
-    function renderAlerts(isMom, isVeg) {
+    function renderAlerts(isMom, isVeg, isMounjaro) {
         const alertSection = document.getElementById('alert-section');
         alertSection.innerHTML = '';
 
         if (isMom) {
             alertSection.innerHTML += `
                 <div class="alert-box mom">
-                    <span style="font-size:1.5rem; margin-right:10px;">🤰</span>
+                    <span style="font-size:1.5rem; margin-right:10px;">🤱🏻</span>
                     <div>
                         <strong>孕媽咪/哺乳專屬提醒：</strong><br>
                         1. 系統已移除 <b>Q10、穀胱甘肽、薑黃</b> 等暫不建議成分。<br>
@@ -523,6 +552,20 @@
             `;
         }
         
+        if (isMounjaro) {
+            alertSection.innerHTML += `
+                <div class="alert-box mounjaro">
+                    <span style="font-size:1.5rem; margin-right:10px;">💉</span>
+                    <div>
+                        <strong>猛健樂療程筆記：</strong><br>
+                        1. 已加強 <b>肌酸與蛋白質</b> 建議，預防肌肉流失(肌少症)。<br>
+                        2. <b>鎂</b> 對於緩解療程常見的排便困擾非常有幫助。<br>
+                        3. 請務必補充足夠水分 (2500cc/日) 以利代謝。
+                    </div>
+                </div>
+            `;
+        }
+
         if (isVeg) {
             alertSection.innerHTML += `
                 <div class="alert-box normal">
@@ -537,7 +580,8 @@
         }
     }
 
-    function renderSchedule(list) {
+    // 新增參數 isPregnant 來切換說明文字
+    function renderSchedule(list, isPregnant) {
         const timeMap = {
             '起床空腹': ['膠原蛋白', '維他命C', '鐵', '益生菌'],
             '早餐後': ['B群', '薑黃', '葉黃素', '生物素'],
@@ -545,6 +589,9 @@
             '運動前後': ['肌酸', '蛋白質'],
             '睡前': ['鎂', 'GABA', '穀胱甘肽']
         };
+
+        // 選擇對應的說明字典
+        const currentInfo = isPregnant ? ingredientInfoMom : ingredientInfoGeneral;
 
         let html = '';
         
@@ -555,7 +602,7 @@
                 let itemsHtml = userItems.map(item => `
                     <div class="supplement-item">
                         <div class="supp-name">● ${item}</div>
-                        <div class="supp-desc">${ingredientInfo[item] || ''}</div>
+                        <div class="supp-desc">${currentInfo[item] || ''}</div>
                     </div>
                 `).join('');
 
@@ -590,11 +637,9 @@
         let html = '';
         let hasItem = false;
         
-        // 分離現在可買 與 未來產品
         const currentItems = list.filter(item => wbData[item] && !wbData[item].isFuture);
         const futureItems = list.filter(item => wbData[item] && wbData[item].isFuture);
 
-        // 渲染維補益現貨
         currentItems.forEach(item => {
             hasItem = true;
             html += `
@@ -609,7 +654,6 @@
             `;
         });
 
-        // 渲染膠原蛋白 (如果有被選中)
         futureItems.forEach(item => {
             hasItem = true;
             html += `
